@@ -1,0 +1,27 @@
+name: main.yml
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v2
+    - run: |
+       printenv
+       printenv > printenv.txt
+    - run: |
+       apt-get update && apt-get --fix-missing -y install coreutils make || echo
+    - run: |
+       make
+       make -    
+       make submodules
+       make init        
+       make help        
+       make report		
+       make venv        
+       make venv-help   
+       make venv-install
+       #make venv-test   
+    - run: npm install
+    - run: npm test
