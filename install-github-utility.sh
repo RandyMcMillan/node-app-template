@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+if [[ "$IMAGE_OS" == "ubuntu"* ]]; then
+sudo apt install hub nvm docker.io 
+fi
+if hash brew 2>/dev/null; then
+	brew update
+fi
 checkbrew() {
     if hash brew 2>/dev/null; then
         brew install hub
@@ -26,7 +33,7 @@ checkraspi(){
     echo "- Firmware"
     /opt/vc/bin/vcgencmd version
 }
-if [[ "$OSTYPE" == "linux"* ]]; then
+if [[ "$OSTYPE" == *"inux"* ]]; then
     #CHECK APT
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         PACKAGE_MANAGER=apt
@@ -36,7 +43,8 @@ if [[ "$OSTYPE" == "linux"* ]]; then
         AWK=gawk
         export AWK
         if hash apt 2>/dev/null; then
-            $PACKAGE_MANAGER $INSTALL $AWK hub
+            #sudo $PACKAGE_MANAGER $INSTALL $AWK
+            sudo apt install  hub
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then

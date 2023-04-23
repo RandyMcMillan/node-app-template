@@ -5,9 +5,28 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v2
     - run: |
+       printenv
        printenv > printenv.txt
+    - run: |
+       type -P make && make init && make
+       make -    
+       make submodules
+       make init        
+       make help        
+       make report		
+       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+       #make github      
+       #make hub         
+       #make nvm         
+       #make nvm-clean   
+       #make tag         
+       make venv        
+       make venv-help   
+       make venv-install
+       #make venv-test   
     - run: npm install
     - run: npm test

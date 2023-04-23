@@ -39,7 +39,7 @@ export DOCKER
 ifneq ($(shell docker-compose),)
 DOCKER_COMPOSE                          := $(shell which docker-compose)
 else
-DOCKER_COMPOSE                          := $(shell $(DOCKER) compose)
+DOCKER_COMPOSE                          := $(shell which $(DOCKER) compose)
 endif
 export DOCKER_COMPOSE
 
@@ -248,10 +248,12 @@ hub:####
 	$(PWD)/install-github-utility.sh
 
 nvm:#### 	nvm
-	@curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash || git pull -C $(HOME)/.nvm && export NVM_DIR="$(HOME)/.nvm" && [ -s "$(NVM_DIR)/nvm.sh" ] && \. "$(NVM_DIR)/nvm.sh" && [ -s "$(NVM_DIR)/bash_completion" ] && \. "$(NVM_DIR)/bash_completion"  && nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)
-	@source ~/.bashrc && nvm alias $(NODE_ALIAS) $(NODE_VERSION)
+.ONESHELL:
+	type -P curl || echo "install curl!"
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash || git pull -C $(HOME)/.nvm && export NVM_DIR="$(HOME)/.nvm" && [ -s "$(NVM_DIR)/nvm.sh" ] && \. "$(NVM_DIR)/nvm.sh" && [ -s "$(NVM_DIR)/bash_completion" ] && \. "$(NVM_DIR)/bash_completion"  && nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)
+	source $(HOME)/.bashrc && nvm alias $(NODE_ALIAS) $(NODE_VERSION)
 nvm-clean: ## 	nvm-clean
-	@rm -rf ~/.nvm
+	@rm -rf $(HOME)/.nvm
 
 tag:#### 	git tag and git push --force
 	@git tag $(OS)-$(OS_VERSION)-$(ARCH)-$(shell date +%s)
@@ -263,5 +265,6 @@ venv:#### 	additional make venv commands
 
 -include venv.mk
 -include hub.mk
+-include act.mk
 # vim: set noexpandtab:
 # vim: set setfiletype make

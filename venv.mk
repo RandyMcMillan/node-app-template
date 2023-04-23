@@ -4,7 +4,7 @@ venv-install:##### 	create .venv
 	@touch requirements.txt
 	test -d .venv || $(shell which python3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   source .venv/bin/activate; pip3 install -r requirements.txt; \
 	);
 	@echo "To activate (venv)"
 	@echo "try:"
@@ -13,9 +13,10 @@ venv-install:##### 	create .venv
 	@echo "make venv-test"
 venv-test:##### 	add more python3 tests here
 	# insert test commands here
+	@touch requirements.txt
 	test -d .venv || $(shell which python3) -m virtualenv .venv
 	( \
-	   source .venv/bin/activate; pip install -r requirements.txt; \
+	   source .venv/bin/activate; pip3 install -r requirements.txt; \
 	);
 # vim: set noexpandtab:
 # vim: set setfiletype make
