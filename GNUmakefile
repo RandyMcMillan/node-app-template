@@ -173,72 +173,37 @@ export PORTER_VERSION
 
 ##make	:	command			description
 ##	:
--:## - default - try 'make submodules'
+-:## 	default - try 'make submodules'
 -:
 	#NOTE: 2 hashes are detected as 1st column output with color
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 submodules:#### 	git submodule update --init --recursive
 	type -P git && git submodule update --init --recursive || echo "install git..."
-nodegit$(EXEEXT):#### 	cd node_modules && node_gyp build
-	-cd $(NODE_MODULE_DIR) && $(NODE_GYP) build
-clean-local:#### 	cd node_modules && node-gyp clean
-	-cd $(NODE_MODULE_DIR) && node-gyp clean
 
-
-####	:	-
-####	:	help
-####	:	report			environment args
-####	:
-####	:	all			execute installer scripts
-####	:	init
-####	:	brew
-####	:	keymap
-
-####	:
-####	:	whatami			report system info
-####	:
-####	:	adduser-git		add a user named git
-
-keymap:#### 	install ./init/com.local.KeyRemapping.plist
-	@mkdir -p ~/Library/LaunchAgents/
-	@cat ./init/com.local.KeyRemapping.plist > ~/Library/LaunchAgents/com.local.KeyRemapping.plist
-#REF: https://tldp.org/LDP/abs/html/abs-guide.html#IO-REDIRECTION
-	#test hidutil && hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}' > /dev/null 2>&1 && echo "<Caps> = <Esc>" || echo wuh
+####	:-               	default - try 'make submodules'
+####	:submodules      	git submodule update --init --recursive
+####	:init            	init
+####	:help            	print verbose help
+####	:report          	print make variables
+####	:github          	install hub utility
+####	:hub             	
+####	:nvm             	nvm
+####	:nvm-clean       	nvm-clean
+####	:tag             	git tag and git push --force
+####	:venv            	additional make venv commands
+####	:venv-help       	venv-help
+####	:venv-install    	create .venv
+####	:venv-test       	add more python3.8 tests here
 
 init:#### 	init
-	#@type -P chsh && chsh -s /bin/bash #&& ./scripts/initialize
-	#["$(shell $(SHELL))" == "/bin/zsh"] && zsh --emulate sh
-	#["$(shell $(SHELL))" == "/bin/zsh"] && chsh -s /bin/bash
-	#@echo ...$(DOTFILES_PATH)
-	#@[[ " ${PATH//:/ } " =~ "$(DOTFILES_PATH)" ]] && echo Found it || echo Not found
-	cat $(PWD)/.bash_profile.in > $(PWD)/.bash_profile
-	echo 'export PATH="$(DOTFILES_PATH):$(PATH)"' >> $(PWD)/.bash_profile
+	echo 'export PATH="$(PWD):$(PATH)"' >> $(HOME)/.bash_profile
 	echo $(NODE_VERSION) > .nvmrc
-	#@./scripts/initialize
-brew:#### 	install or update/upgrade brew
-	export HOMEBREW_INSTALL_FROM_API=1
-	@eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)" && brew upgrade  --casks && brew update
-	type -P brew && echo -e "try\nbrew update --casks --greedy"|| ./install-brew.sh
-	type -P brew && brew commands
-brew-bundle-dump:## create Brewfile
-	@eval "$(${HOMEBREW_PREFIX}/bin/brew shellenv)" && brew bundle dump -f
-iterm:## brew install --cask iterm2
-	rm -rf /Applications/iTerm.app
-	test brew && brew install -f --cask iterm2 && \
-		curl -L https://iterm2.com/shell_integration/install_shell_integration_and_utilities.sh | bash
 
-.PHONY: help
 help:#### 	print verbose help
-	@echo '[COMMAND]		[DESCRIPTION] [EXTRA_ARGUMENTS]	'
-	@echo '         		[EXTRA_ARGUMENTS]	'
+	@echo ''
+	@echo '	[COMMAND]		[DESCRIPTION]'
 	@echo ''
 	@sed -n 's/^####//p' ${MAKEFILE_LIST} | sed -e 's/://'| sed -e 's/		//'
-	@echo ""
-	@echo "Useful Commands:"
-	@echo ""
-	@echo "git-\<TAB>";
-	@echo "gpg-\<TAB>";
-	@echo "bitcoin-\<TAB>";
 	@echo ""
 
 report:#### 	print make variables
@@ -277,118 +242,26 @@ report:#### 	print make variables
 	@echo ''
 	@echo 'PORT_VERSION=${PORTER_VERSION}	'
 
-#.PHONY:
-#phony:
-#	@sed -n 's/^.PHONY//p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/ /'
+github:#### 	install hub utility
+	$(PWD)/install-github-utility.sh
+hub:#### 	
+	$(PWD)/install-github-utility.sh
 
-whatami:#### 	bash ./whatami.sh
-	@bash ./whatami.sh
-#.PHONY:readme
-#readme:
-#	make help > source/COMMANDS.md
-#	git add -f README.md && git commit -m "make readme" && git push -f origin master
-.PHONY: adduser-git
-##	:	adduser-git		add a user named git
-adduser-git:#### 	source adduser-git.sh && adduser-git
-	source $(PWD)/adduser-git.sh && adduser-git
-
-
-##	:	bootstrap		source bootstrap.sh
-.PHONY: bootstrap
-bootstrap:#### 	./bootstrap.sh && make vim
-	@bash -c "$(PWD)/bootstrap.sh" #force"
-	@make vim
-
-
-.PHONY: install
-##	:	install		 	install sequence
-install: executable
-	@echo "install sequence here..."
-
-
-.PHONY: github
-github: executable#### 	config-github
-	@./config-github
-
-.ONESHELL:
 nvm:#### 	nvm
 	@curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash || git pull -C $(HOME)/.nvm && export NVM_DIR="$(HOME)/.nvm" && [ -s "$(NVM_DIR)/nvm.sh" ] && \. "$(NVM_DIR)/nvm.sh" && [ -s "$(NVM_DIR)/bash_completion" ] && \. "$(NVM_DIR)/bash_completion"  && nvm install $(NODE_VERSION) && nvm use $(NODE_VERSION)
 	@source ~/.bashrc && nvm alias $(NODE_ALIAS) $(NODE_VERSION)
 nvm-clean: ## 	nvm-clean
 	@rm -rf ~/.nvm
 
-####	:	all			
-all: executable gnupg brew-libs
-brew-libs: libassuan libgcrypt libgpg-error libksba libusb
-node:
-	bash -c "source $(PWD)/template && checkbrew install                       node"
-node@18:
-	bash -c "source $(PWD)/template && checkbrew install                       node@18"
-node@16:
-	bash -c "source $(PWD)/template && checkbrew install                       node@16"
-node@14:
-	bash -c "source $(PWD)/template && checkbrew install                       node@14"
-node@12:
-	bash -c "source $(PWD)/template && checkbrew install                       node@12"
-node@10:
-	bash -c "source $(PWD)/template && checkbrew install                       node@10"
-yarn:
-	bash -c "source $(PWD)/template && checkbrew install                       yarn"
-
-.PHONY: shell alpine alpine-shell debian debian-shell d-shell
-shell: alpine-shell
-##	:	alpine-shell		run install-shell.sh alpine user=root
-alpine-shell: alpine
-alpine:
-	test docker && ./install-shell.sh alpine || echo "make docker OR checkbrew -i docker"
-##	:	alpine-build		run install-shell.sh alpine-build user=root
-alpine-build:
-	test docker && ./install-shell.sh alpine-build || echo "make docker OR checkbrew -i docker"
-d-shell: debian-shell
-##	:	debian-shell		run install-shell.sh debian user=root
-debian-shell: debian
-debian:
-	test docker && ./install-shell.sh debian || echo "make docker OR checkbrew -i docker"
-	./install-shell.sh debian
-
-.PHONY: hub
-hub: executable## 	install github utility
-	$(DOTFILES_PATH)/./install-github-utility.sh
-
-tag:
+tag:#### 	git tag and git push --force
 	@git tag $(OS)-$(OS_VERSION)-$(ARCH)-$(shell date +%s)
 	@git push -f --tags
 
-.ONESHELL:
-touch-time:
-	touch TIME
-	echo $(TIME) $(shell git rev-parse HEAD) >> TIME
-
-ifeq ($(bitcoin-version),)
-	@echo Example:
-	@echo add tag v22.0rc3
-BITCOIN_VERSION:=v22.0rc3
-else
-BITCOIN_VERSION:=$(bitcoin-version)
-endif
-export BITCOIN_VERSION
-.PHONY: bitcoin-test-battery
-bitcoin-test-battery:
-	bash -c "./bitcoin-test-battery.sh $(BITCOIN_VERSION) "
-
-.PHONY: funcs
-funcs:#### 	additional commands
-	$(MAKE) -f funcs.mk
-.PHONY: legit
-legit:#### 	additional make legit
-	$(MAKE) -f legit.mk
-.PHONY: rust
-rust:#### 	additional make rustcommands
-	$(MAKE) -f rust.mk
 .PHONY: venv
 venv:#### 	additional make venv commands
 	$(MAKE) -f venv.mk
 
 -include venv.mk
+-include hub.mk
 # vim: set noexpandtab:
 # vim: set setfiletype make
