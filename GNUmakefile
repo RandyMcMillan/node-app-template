@@ -176,9 +176,24 @@ export PORTER_VERSION
 -:## 	default - try 'make submodules'
 -:
 	#NOTE: 2 hashes are detected as 1st column output with color
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?##"} /^[a-zA-Z_-]+:.*?##/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?### "} /^[a-zA-Z_-]+:.*?### / {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?#### "} /^[a-zA-Z_-]+:.*?#### / {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?### 	"} /^[a-zA-Z_-]+:.*?### 	/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?#### 	"} /^[a-zA-Z_-]+:.*?#### 	/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?### 		"} /^[a-zA-Z_-]+:.*?### 		/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?#### 		"} /^[a-zA-Z_-]+:.*?#### 		/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?###  		"} /^[a-zA-Z_-]+:.*?###  		/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?####  		"} /^[a-zA-Z_-]+:.*?####  		/ {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 submodules:#### 	git submodule update --init --recursive
 	type -P git && git submodule update --init --recursive || echo "install git..."
+
+test1:### 		testing 1
+test2:###  		testing 2
+test3:###   		testing 3
+test3:###    		testing 4
+test1:#### 		testing 1
+test2:####  		testing 2
 
 ####	:-               	default - try 'make submodules'
 ####	:submodules      	git submodule update --init --recursive
@@ -194,6 +209,20 @@ submodules:#### 	git submodule update --init --recursive
 ####	:venv-help       	venv-help
 ####	:venv-install    	create .venv
 ####	:venv-test       	add more python3.8 tests here
+####		:-               	default - try 'make submodules'
+####		:submodules      	git submodule update --init --recursive
+####		:init            	init
+####		:help            	print verbose help
+####		:report          	print make variables
+####		:github          	install hub utility
+####		:hub             	
+####		:nvm             	nvm
+####		:nvm-clean       	nvm-clean
+####		:tag             	git tag and git push --force
+####		:venv            	additional make venv commands
+####		:venv-help       	venv-help
+####		:venv-install    	create .venv
+####		:venv-test       	add more python3.8 tests here
 
 init:#### 	init
 	echo 'export PATH="$(PWD):$(PATH)"' >> $(HOME)/.bash_profile
@@ -259,9 +288,10 @@ tag:#### 	git tag and git push --force
 	@git tag $(OS)-$(OS_VERSION)-$(ARCH)-$(shell date +%s)
 	@git push -f --tags
 
-.PHONY: venv
 venv:#### 	additional make venv commands
 	$(MAKE) -f venv.mk
+act:#### 	additional make act commands
+	$(MAKE) -f act.mk
 
 -include venv.mk
 -include hub.mk
