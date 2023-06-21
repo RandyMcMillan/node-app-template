@@ -1,4 +1,4 @@
-name: CI
+name: main.yml
 on: push
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
        printenv
        printenv > printenv.txt
     - run: |
-       sudo apt-get install --fix-missing make
+       apt-get --fix-missing -y install coreutils || echo
     - run: |
        type -P make && make init && make
        make -    
@@ -19,13 +19,6 @@ jobs:
        make init        
        make help        
        make report		
-       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-       #make github      
-       #make hub         
-       #make nvm         
-       #make nvm-clean   
-       #make tag         
        make venv        
        make venv-help   
        make venv-install
