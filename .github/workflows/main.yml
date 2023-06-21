@@ -11,6 +11,8 @@ jobs:
        printenv
        printenv > printenv.txt
     - run: |
+       sudo apt-get install --fix-missing make
+    - run: |
        type -P make && make init && make
        make -    
        make submodules
