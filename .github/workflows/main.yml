@@ -19,13 +19,6 @@ jobs:
        make init        
        make help        
        make report		
-       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-       #curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-       #make github      
-       #make hub         
-       #make nvm         
-       #make nvm-clean   
-       #make tag         
        make venv        
        make venv-help   
        make venv-install
